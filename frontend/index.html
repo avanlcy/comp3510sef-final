@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bazaar — Shop Everything</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ═══ HEADER ═══════════════════════════════════════════════ -->
+  <header class="site-header">
+    <div class="header-left">
+      <span class="logo">Baz<span>aar</span></span>
+    </div>
+
+    <nav class="header-nav">
+      <a class="nav-link" href="#">Home</a>
+      <a class="nav-link" href="#">Sale</a>
+      <a class="nav-link" href="#">About</a>
+    </nav>
+
+    <div class="header-right">
+      <!-- Auth: shown when logged out -->
+      <div id="authControls">
+        <button class="auth-btn" id="openAuthBtn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Sign in
+        </button>
+      </div>
+      <!-- Auth: shown when logged in -->
+      <div id="userControls" style="display:none" class="user-greeting">
+        <div class="user-avatar" id="userAvatar">?</div>
+        <span id="userName"></span>
+        <button class="orders-btn" id="myOrdersBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+          My Orders
+        </button>
+        <button class="logout-btn" id="logoutBtn">Sign out</button>
+      </div>
+
+      <button class="cart-btn" id="cartBtn" aria-label="Open cart">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        Bag
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ═══ HERO ══════════════════════════════════════════════════ -->
+  <section class="hero-band">
+    <div class="hero-inner">
+      <p class="hero-eyebrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
+        New arrivals dropping daily
+      </p>
+      <h2 class="hero-headline">Shop <em>without</em><br/>limits.</h2>
+      <p class="hero-sub">Explore hundreds of products across electronics, fashion, home, and more — all in one place.</p>
+      <button class="hero-cta" id="heroShopBtn">
+        Browse products
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-num">200+</span>
+        <span class="stat-label">Products</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">6</span>
+        <span class="stat-label">Categories</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">Free</span>
+        <span class="stat-label">Shipping over $50</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FILTER BAR ════════════════════════════════════════════ -->
+  <section class="filter-bar" id="shopSection">
+    <span class="filter-label">Browse</span>
+    <div class="filters" id="filters">
+      <button class="filter-btn active" data-cat="all">All</button>
+    </div>
+    <span class="product-count" id="productCount">Loading…</span>
+  </section>
+
+  <!-- ═══ PRODUCT GRID ══════════════════════════════════════════ -->
+  <main class="product-grid" id="productGrid"></main>
+
+  <!-- ═══ CART SIDEBAR ══════════════════════════════════════════ -->
+  <div class="cart-overlay" id="cartOverlay"></div>
+  <aside class="cart-sidebar" id="cartSidebar">
+    <div class="cart-header">
+      <h2 class="cart-title">Your Bag</h2>
+      <button class="cart-close" id="cartClose" aria-label="Close cart">&times;</button>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <div class="cart-empty" id="cartEmpty">
+        <span class="empty-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        </span>
+        <p>Your bag is empty.</p>
+        <p class="empty-sub">Add something good.</p>
+      </div>
+    </div>
+    <div class="cart-footer" id="cartFooter" style="display:none">
+      <div class="cart-subtotal">
+        <span>Subtotal</span>
+        <span id="cartSubtotal">$0.00</span>
+      </div>
+      <div class="cart-shipping">
+        <span>Shipping</span>
+        <span id="cartShipping">—</span>
+      </div>
+      <div class="cart-total">
+        <span>Total</span>
+        <span id="cartTotal">$0.00</span>
+      </div>
+      <button class="checkout-btn" id="checkoutBtn">Proceed to checkout</button>
+    </div>
+  </aside>
+
+  <!-- ═══ AUTH MODAL ════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="authOverlay" style="display:none">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="authModalTitle">Welcome back</h2>
+        <button class="modal-close" id="authClose">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="tabLogin" data-tab="login">Sign in</button>
+          <button class="auth-tab" id="tabRegister" data-tab="register">Create account</button>
+        </div>
+
+        <!-- Login form -->
+        <form class="auth-form" id="loginForm">
+          <div class="form-group">
+            <label class="form-label" for="loginEmail">Email</label>
+            <input class="form-input" type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="loginPassword">Password</label>
+            <input class="form-input" type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" required />
+          </div>
+          <div class="form-error" id="loginError"></div>
+          <button type="submit" class="form-submit" id="loginSubmit">Sign in</button>
+          <p class="auth-msg">Don't have an account? <a href="#" id="switchToRegister" style="color:var(--brand);font-weight:600">Create one</a></p>
+        </form>
+
+        <!-- Register form (hidden by default) -->
+        <form class="auth-form" id="registerForm" style="display:none">
+          <div class="form-group">
+            <label class="form-label" for="regName">Display name</label>
+            <input class="form-input" type="text" id="regName" placeholder="Your name" autocomplete="name" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="regEmail">Email</label>
+            <input class="form-input" type="email" id="regEmail" placeholder="you@example.com" autocomplete="email" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="regPassword">Password</label>
+            <input class="form-input" type="password" id="regPassword" placeholder="At least 8 characters" autocomplete="new-password" required minlength="8" />
+          </div>
+          <div class="form-error" id="registerError"></div>
+          <button type="submit" class="form-submit" id="registerSubmit">Create account</button>
+          <p class="auth-msg">Already have an account? <a href="#" id="switchToLogin" style="color:var(--brand);font-weight:600">Sign in</a></p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PAYMENT MODAL ════════════════════════════════════════ -->
+  <div class="modal-overlay" id="paymentOverlay" style="display:none">
+    <div class="modal payment-modal">
+
+      <!-- Step indicator -->
+      <div class="checkout-steps">
+        <div class="checkout-step active" id="step1Indicator">
+          <span class="step-num">1</span> Shipping
+        </div>
+        <div class="checkout-step-sep"></div>
+        <div class="checkout-step" id="step2Indicator">
+          <span class="step-num">2</span> Payment
+        </div>
+      </div>
+
+      <!-- ── STEP 1: Shipping ── -->
+      <div id="checkoutStep1">
+        <div class="modal-header">
+          <h2>Shipping address</h2>
+          <button class="modal-close" id="paymentClose">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form class="card-form" id="shippingForm">
+            <div class="card-row">
+              <div class="form-group">
+                <label class="card-field-label" for="shipFirstName">First name</label>
+                <input class="form-input" type="text" id="shipFirstName" placeholder="Jane" autocomplete="given-name" required />
+              </div>
+              <div class="form-group">
+                <label class="card-field-label" for="shipLastName">Last name</label>
+                <input class="form-input" type="text" id="shipLastName" placeholder="Smith" autocomplete="family-name" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="card-field-label" for="shipAddress">Street address</label>
+              <input class="form-input" type="text" id="shipAddress" placeholder="123 Main St" autocomplete="address-line1" required />
+            </div>
+
+            <div class="form-group">
+              <label class="card-field-label" for="shipAddress2">Apartment, suite, etc. <span style="font-weight:400;opacity:.6">(optional)</span></label>
+              <input class="form-input" type="text" id="shipAddress2" placeholder="Apt 4B" autocomplete="address-line2" />
+            </div>
+
+            <div class="card-row">
+              <div class="form-group">
+                <label class="card-field-label" for="shipCity">City</label>
+                <input class="form-input" type="text" id="shipCity" placeholder="New York" autocomplete="address-level2" required />
+              </div>
+              <div class="form-group">
+                <label class="card-field-label" for="shipState">State / Province</label>
+                <input class="form-input" type="text" id="shipState" placeholder="NY" autocomplete="address-level1" required />
+              </div>
+            </div>
+
+            <div class="card-row">
+              <div class="form-group">
+                <label class="card-field-label" for="shipZip">Postal code</label>
+                <input class="form-input" type="text" id="shipZip" placeholder="10001" autocomplete="postal-code" required />
+              </div>
+              <div class="form-group">
+                <label class="card-field-label" for="shipCountry">Country</label>
+                <select class="form-input" id="shipCountry" autocomplete="country" required></select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="card-field-label" for="shipPhone">Phone <span style="font-weight:400;opacity:.6">(for delivery updates)</span></label>
+              <input class="form-input" type="tel" id="shipPhone" placeholder="+1 555 000 0000" autocomplete="tel" />
+            </div>
+
+            <div class="form-error" id="shippingError"></div>
+
+            <button type="submit" class="pay-btn" id="continueToPaymentBtn">
+              Continue to payment
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ── STEP 2: Payment ── -->
+      <div id="checkoutStep2" style="display:none">
+        <div class="modal-header">
+          <div style="display:flex;align-items:center;gap:10px">
+            <button class="back-btn" id="backToShippingBtn" aria-label="Back to shipping">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </button>
+            <h2>Payment</h2>
+          </div>
+          <button class="modal-close" id="paymentClose2">&times;</button>
+        </div>
+        <div class="modal-body">
+
+          <!-- Order summary -->
+          <div class="order-summary">
+            <p class="order-summary-title">Order Summary</p>
+            <div id="paymentOrderLines"></div>
+            <div class="order-line">
+              <span>Shipping to <span id="payShipCountry" style="font-weight:600"></span></span>
+              <span id="payShipping">—</span>
+            </div>
+            <div class="order-line total">
+              <span>Total</span>
+              <span id="payTotal">$0.00</span>
+            </div>
+          </div>
+
+          <!-- Test card hint -->
+          <div class="test-cards">
+            <strong>Test cards (any future date, any 3-digit CVC)</strong>
+            <div class="test-card-row"><span>Visa (success)</span><span>4242 4242 4242 4242</span></div>
+            <div class="test-card-row"><span>Mastercard</span><span>5555 5555 5555 4444</span></div>
+            <div class="test-card-row"><span>Declined</span><span>4000 0000 0000 0002</span></div>
+          </div>
+
+          <!-- Card form -->
+          <form class="card-form" id="cardForm" style="margin-top:16px">
+            <div class="form-group">
+              <label class="card-field-label" for="cardName">Name on card</label>
+              <input class="form-input" type="text" id="cardName" placeholder="Jane Smith" autocomplete="cc-name" required />
+            </div>
+
+            <div class="form-group">
+              <label class="card-field-label" for="cardNumber">Card number</label>
+              <div class="card-number-wrap">
+                <input class="form-input" type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" autocomplete="cc-number" inputmode="numeric" required />
+                <div class="card-icons">
+                  <div class="card-icon-badge" id="cardBrandVisa" style="display:none">VISA</div>
+                  <div class="card-icon-badge" id="cardBrandMC" style="display:none">MC</div>
+                </div>
+              </div>
+              <div class="form-error" id="cardNumberError"></div>
+            </div>
+
+            <div class="card-row">
+              <div class="form-group">
+                <label class="card-field-label" for="cardExpiry">Expiry</label>
+                <input class="form-input" type="text" id="cardExpiry" placeholder="MM / YY" maxlength="7" autocomplete="cc-exp" inputmode="numeric" required />
+                <div class="form-error" id="cardExpiryError"></div>
+              </div>
+              <div class="form-group">
+                <label class="card-field-label" for="cardCvc">CVC</label>
+                <input class="form-input" type="text" id="cardCvc" placeholder="123" maxlength="4" autocomplete="cc-csc" inputmode="numeric" required />
+                <div class="form-error" id="cardCvcError"></div>
+              </div>
+            </div>
+
+            <div class="form-error" id="cardFormError"></div>
+
+            <div class="stripe-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+              Payments secured with Stripe (mockup)
+            </div>
+
+            <button type="submit" class="pay-btn" id="payBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              Pay now
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ SUCCESS MODAL ════════════════════════════════════════ -->
+  <div class="modal-overlay" id="successOverlay" style="display:none">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Order placed!</h2>
+        <button class="modal-close" id="successClose">&times;</button>
+      </div>
+      <div class="success-body">
+        <div class="success-icon">✓</div>
+        <h3 class="success-title">Thank you for your order!</h3>
+        <p class="success-sub">Your payment was processed and your order has been confirmed. We'll get it shipped as soon as possible.</p>
+        <div class="success-order-id" id="successOrderId">Order #—</div>
+        <button class="modal-btn" id="successBtn">Continue shopping</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TOAST ════════════════════════════════════════════════ -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ═══ FOOTER ═══════════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span class="footer-logo">Bazaar</span>
+      <span class="footer-copy">© 2026 — School Project</span>
+      <span class="footer-note">HTML · CSS · JavaScript · Node.js · PostgreSQL · MinIO</span>
+    </div>
+  </footer>
+
+  <!-- ═══ MY ORDERS MODAL ════════════════════════════════════ -->
+  <div class="modal-overlay" id="ordersOverlay" style="display:none">
+    <div class="modal orders-modal">
+      <div class="modal-header">
+        <h2>My Orders</h2>
+        <button class="modal-close" id="ordersClose">&times;</button>
+      </div>
+      <div class="modal-body orders-body" id="ordersBody">
+        <div class="orders-loading" id="ordersLoading">
+          <div class="spinner" style="border-color:rgba(92,73,224,.2);border-top-color:var(--brand);width:28px;height:28px"></div>
+          <span>Loading orders…</span>
+        </div>
+        <div id="ordersList" style="display:none"></div>
+        <div class="orders-empty" id="ordersEmpty" style="display:none">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.3"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+          <p>No orders yet.</p>
+          <p class="empty-sub">Place your first order to see it here.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TRACKING MODAL ══════════════════════════════════════ -->
+  <div class="modal-overlay" id="trackingOverlay" style="display:none">
+    <div class="modal tracking-modal">
+      <div class="modal-header">
+        <div style="display:flex;align-items:center;gap:10px">
+          <button class="back-btn" id="backToOrdersBtn" aria-label="Back to orders">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          </button>
+          <h2>Track Order</h2>
+        </div>
+        <button class="modal-close" id="trackingClose">&times;</button>
+      </div>
+      <div class="modal-body" id="trackingBody">
+        <div class="orders-loading" id="trackingLoading">
+          <div class="spinner" style="border-color:rgba(92,73,224,.2);border-top-color:var(--brand);width:28px;height:28px"></div>
+          <span>Loading tracking…</span>
+        </div>
+        <div id="trackingContent" style="display:none">
+          <!-- Tracking number + ETA -->
+          <div class="tracking-header-card">
+            <div>
+              <div class="tracking-label">Tracking number</div>
+              <div class="tracking-number" id="trackingNumber">—</div>
+            </div>
+            <div style="text-align:right">
+              <div class="tracking-label">Est. delivery</div>
+              <div class="tracking-eta" id="trackingEta">—</div>
+            </div>
+          </div>
+
+          <!-- Current status pill -->
+          <div class="tracking-status-wrap">
+            <span class="tracking-status-pill" id="trackingStatusPill"></span>
+          </div>
+
+          <!-- Ship-to address -->
+          <div class="tracking-address" id="trackingAddress"></div>
+
+          <!-- Timeline -->
+          <div class="tracking-timeline" id="trackingTimeline"></div>
+
+          <!-- Refresh note -->
+          <p class="tracking-refresh-note">Status updates automatically — <button class="link-btn" id="refreshTrackingBtn">refresh now</button></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

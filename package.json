@@ -1,0 +1,19 @@
+{
+  "name": "comp3510sef-final",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/avanlcy/comp3510sef-final.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/avanlcy/comp3510sef-final/issues"
+  },
+  "homepage": "https://github.com/avanlcy/comp3510sef-final#readme"
+}
