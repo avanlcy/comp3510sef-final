@@ -11,7 +11,7 @@ A full-stack shopping web application built as a school project.
 | Lee Chun Yin | 14007429 |
 | Phang Chi Ho | 14100612 |
 | Fung Ming Chu | 14201890 |
-| Fung Long Hei | 1421949 |
+| Fung Long Hei | 14219499 |
 
 ## Stack
 
